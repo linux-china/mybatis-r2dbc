@@ -1,0 +1,98 @@
+@startuml
+
+interface SqlSessionFactory {
+  SqlSession openSession(X x);
+  ReactiveSqlSession openReactiveSession(X x);
+}
+
+interface SqlSession {
+   T selectOne(String statement);
+   List<E> selectList(String statement)
+   int update(String statement);
+   int insert(String statement);
+   int delete(String statement);
+   T getMapper(Class<T> type);
+}
+
+class DefaultSqlSession implements SqlSession {
+    Configuration configuration;
+    Executor executor;
+}
+
+interface ReactiveSqlSession #6CB43F {
+    T getMapper(Class<T> type);
+}
+
+class DefaultReactiveSqlSession #6CB43F implements  ReactiveSqlSession  {
+   Configuration configuration;
+   ReactiveExecutor executor;
+}
+
+interface ReactiveExecutor #6CB43F{
+}
+
+class SimpleReactiveExecutor #6CB43F implements ReactiveExecutor {
+  R2dbc r2dbc;
+  Configuration configuration;
+}
+
+
+class SqlSessionFactoryBuilder {
+    SqlSessionFactory build(Configuration config)
+}
+
+interface Executor {
+
+}
+
+class SimpleExecutor implements Executor {
+    Transaction transaction;
+    Configuration configuration;
+}
+
+class XMLConfigBuilder {
+   XMLConfigBuilder(InputStream inputStream, String environment);
+
+   Configuration parse();
+}
+
+class Configuration {
+   Map<String, MappedStatement> mappedStatements;
+}
+
+class MappedStatement {
+    String id;
+    SqlSource sqlSource;
+    ParameterMap parameterMap;
+    SqlCommandType sqlCommandType;
+    ResultSetType resultSetType;
+}
+
+interface XxxMapper {
+   T findById(Integer id);
+}
+
+interface ReactiveXxxMapper #6CB43F {
+   T findById(Integer id);
+}
+
+SqlSessionFactoryBuilder -up-> XMLConfigBuilder: configuration builder
+XMLConfigBuilder --> Configuration: parse
+SqlSessionFactoryBuilder -right-> Configuration: construct configuration \n from XML
+
+Configuration --> MappedStatement
+
+SqlSessionFactoryBuilder --> SqlSessionFactory: Build Factory \n from Configuration
+
+SqlSessionFactory -right-> SqlSession: create session
+SqlSessionFactory -left-> ReactiveSqlSession: create session
+
+DefaultSqlSession -right-> Executor: executor
+
+DefaultReactiveSqlSession -left-> ReactiveExecutor
+
+SqlSession -right-> XxxMapper: get Mapper
+
+ReactiveSqlSession -left-> ReactiveXxxMapper: get reactive Mapper
+
+@enduml
