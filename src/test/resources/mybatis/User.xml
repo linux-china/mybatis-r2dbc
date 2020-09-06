@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.ibatis.r2dbc.demo.UserMapper">
+    <resultMap id="UserResultMap" type="User">
+        <id column="id" property="id"/>
+        <result column="nick" property="nick"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="UserResultMap">
+        select id, nick, created_at
+        from people
+    </select>
+
+    <select id="getAllCount" resultType="long">
+        select count(*)
+        from people
+    </select>
+
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into people(nick, created_at) value (#{nick}, now())
+    </insert>
+
+    <select id="findById" parameterType="int" resultMap="UserResultMap">
+        select id, nick, created_at from people WHERE id = #{value}
+    </select>
+
+    <select id="find2ById" parameterType="int" resultType="map">
+        select id, nick, created_at from people WHERE id = #{value}
+    </select>
+
+    <update id="update" parameterType="User">
+        update people
+        set nick = #{nick}
+        where id = #{id}
+    </update>
+
+    <select id="dynamicFindExample" parameterType="User" resultMap="UserResultMap">
+        select id, nick, created_at from people
+        WHERE
+        <if test="nick != null">
+            nick = #{nick}
+        </if>
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+    </select>
+
+    <!-- <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>-->
+
+</mapper>
