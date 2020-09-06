@@ -189,7 +189,7 @@ Pipelining versus Parallel Query Execution请参考: https://www.percona.com/blo
 
 ```
 @Bean
-public reactiveSqlSessionFactory(ConnectionFactory r2dbcConnectionFactory)  {
+public ReactiveSqlSessionFactory reactiveSqlSessionFactory(ConnectionFactory r2dbcConnectionFactory)  {
   XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(this.getClass().getResourceAsStream("/mybatis-config.xml"));
   Configuration configuration = xmlConfigBuilder.parse();
   return new DefaultReactiveSqlSessionFactory(configuration, r2dbcConnectionFactory);
