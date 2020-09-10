@@ -6,6 +6,8 @@
 
     <properties>
         <property name="metrics.enabled" value="true"/>
+        <!-- r2dbc url-->
+        <!-- <property name="r2dbc.url" value="r2dbc:mariadb://root@127.0.0.1:3306/r2dbc"/>-->
         <property name="r2dbc.pool.initial-size" value="1"/>
         <property name="r2dbc.pool.max-size" value="10"/>
         <!-- max idle time, the unit is Minute-->
