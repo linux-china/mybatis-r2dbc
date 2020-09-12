@@ -172,7 +172,7 @@ Pipelining versus Parallel Query Execution请参考: https://www.percona.com/blo
 
 对应MyBatis来说，cache也并复杂，Cache也是基于Mapper的，我们只需要基于paramObject缓存对应的Mono或者Flux对象就可以。
 
-```
+```java
  Mono<String> user = Mono.defer(() -> {
             // r2dbc operation
             return r2dbcResult;
@@ -187,7 +187,7 @@ Pipelining versus Parallel Query Execution请参考: https://www.percona.com/blo
 
 如果你项目中已经包含spring-boot-starter-data-r2dbc，那么你可以完全使用Spring Boot提供的R2DBC的ConnectionFactory bean完成数据库连接相关的任务。
 
-```
+```java
 @Bean
 public ReactiveSqlSessionFactory reactiveSqlSessionFactory(ConnectionFactory r2dbcConnectionFactory)  {
   XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(this.getClass().getResourceAsStream("/mybatis-config.xml"));
