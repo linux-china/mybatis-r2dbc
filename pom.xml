@@ -16,7 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <reactor-bom.version>Dysprosium-SR12</reactor-bom.version>
-        <r2dbc-bom.version>Arabba-SR7</r2dbc-bom.version>
+        <r2dbc-bom.version>Arabba-SR8</r2dbc-bom.version>
         <mybatis.version>3.5.6</mybatis.version>
         <junit5.version>5.7.0</junit5.version>
     </properties>
@@ -58,7 +58,6 @@
         <dependency>
             <groupId>org.mariadb</groupId>
             <artifactId>r2dbc-mariadb</artifactId>
-            <version>0.8.4-rc</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
