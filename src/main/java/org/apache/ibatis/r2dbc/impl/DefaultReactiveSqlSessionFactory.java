@@ -35,6 +35,7 @@ public class DefaultReactiveSqlSessionFactory implements ReactiveSqlSessionFacto
         if (r2dbcUrl == null && jdbcUrl != null) {
             String credential = username + (password == null || password.isEmpty() ? "" : ":" + password);
             r2dbcUrl = jdbcUrl.replace("jdbc:", "r2dbc:");
+            r2dbcUrl = r2dbcUrl.replace("r2dbc:mysql:", "r2dbc:mariadb:");
             r2dbcUrl = r2dbcUrl.replace("//", "//" + credential + "@");
         }
         assert r2dbcUrl != null;
