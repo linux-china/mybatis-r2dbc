@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <reactor-bom.version>Dysprosium-SR12</reactor-bom.version>
+        <reactor-bom.version>Dysprosium-SR13</reactor-bom.version>
         <r2dbc-bom.version>Arabba-SR8</r2dbc-bom.version>
         <mybatis.version>3.5.6</mybatis.version>
         <junit5.version>5.7.0</junit5.version>
@@ -52,12 +52,9 @@
             <artifactId>reactor-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.miku</groupId>
-            <artifactId>r2dbc-mysql</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.mariadb</groupId>
             <artifactId>r2dbc-mariadb</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -77,18 +74,13 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.17.2</version>
+            <version>3.18.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
