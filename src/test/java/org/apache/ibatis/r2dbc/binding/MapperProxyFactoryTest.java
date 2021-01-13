@@ -5,10 +5,12 @@ import org.apache.ibatis.r2dbc.demo.User;
 import org.apache.ibatis.r2dbc.demo.UserMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * MapperProxyFactory test
@@ -79,6 +81,22 @@ public class MapperProxyFactoryTest extends MyBatisBaseTestSupport {
             System.out.println(id);
             System.out.println("ID:" + user.getId());
         });
+        Thread.sleep(5000);
+    }
+
+    @Test
+    public void testUserMapperInsertBatch() throws Exception {
+        User user = new User();
+        user.setNick("nick007");
+        userMapper.getAllCount()
+                .doOnNext((count)-> System.out.println("Total Count Before Insert : " + count))
+                .thenMany(Flux.fromStream(Stream.of(user)))
+                .collectList()
+                .flatMap(userList -> userMapper.batchInsert(userList))
+                .doOnNext(rowCount -> System.out.println("Insert Row Count : " + rowCount))
+                .then(userMapper.getAllCount())
+                .doOnNext((count)-> System.out.println("Total Count After Insert : " + count))
+                .subscribe();
         Thread.sleep(5000);
     }
 }

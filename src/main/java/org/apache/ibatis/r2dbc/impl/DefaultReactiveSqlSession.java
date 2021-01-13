@@ -1,7 +1,16 @@
 package org.apache.ibatis.r2dbc.impl;
 
-import io.r2dbc.spi.*;
-import org.apache.ibatis.mapping.*;
+import io.r2dbc.spi.Connection;
+import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+import io.r2dbc.spi.Statement;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.r2dbc.ReactiveSqlSession;
 import org.apache.ibatis.r2dbc.binding.MapperProxyFactory;
 import org.apache.ibatis.r2dbc.type.R2DBCTypeHandler;
@@ -10,11 +19,17 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * reactive sql session default implementation
@@ -170,24 +185,41 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
 
     public void fillParams(Statement statement, BoundSql boundSql, Object parameter) {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-        MetaObject metaObject = configuration.newMetaObject(parameter);
-        for (int i = 0; i < parameterMappings.size(); i++) {
-            ParameterMapping parameterMapping = parameterMappings.get(i);
-            Object paramValue = metaObject.getValue(parameterMapping.getProperty());
-            Class<?> parameterClass = parameter.getClass();
-            TypeHandler<?> typeHandler = parameterMapping.getTypeHandler();
-            if (typeHandler instanceof R2DBCTypeHandler) {
-                ((R2DBCTypeHandler<Object>) typeHandler).setParameter(statement, i, paramValue, parameterMapping.getJdbcType());
-            } else if (typeHandlerRegistry.hasTypeHandler(parameterClass)) {
-                typeHandlerRegistry.getTypeHandler(parameterClass).setParameter(statement, i, paramValue, parameterMapping.getJdbcType());
-            } else {
-                if (paramValue != null) {
-                    statement.bind(i, paramValue);
-                } else {
-                    statement.bindNull(i, parameterMapping.getJavaType());
+        if (parameterMappings != null) {
+            for (int i = 0; i < parameterMappings.size(); i++) {
+                ParameterMapping parameterMapping = parameterMappings.get(i);
+                if (parameterMapping.getMode() != ParameterMode.OUT) {
+                    Object value;
+                    String propertyName = parameterMapping.getProperty();
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
+                        value = boundSql.getAdditionalParameter(propertyName);
+                    } else if (parameter == null) {
+                        value = null;
+                    } else if (typeHandlerRegistry.hasTypeHandler(parameter.getClass())) {
+                        value = parameter;
+                    } else {
+                        MetaObject metaObject = configuration.newMetaObject(parameter);
+                        value = metaObject.getValue(propertyName);
+                    }
+                    if(value == null){
+                        statement.bindNull(i, parameterMapping.getJavaType());
+                        return;
+                    }
+                    TypeHandler typeHandler = parameterMapping.getTypeHandler();
+                    try {
+                        Class<?> parameterClass = value.getClass();
+                        if (typeHandler instanceof R2DBCTypeHandler) {
+                            ((R2DBCTypeHandler<Object>) typeHandler).setParameter(statement, i, value, parameterMapping.getJdbcType());
+                        } else if (typeHandlerRegistry.hasTypeHandler(parameterClass)) {
+                            typeHandlerRegistry.getTypeHandler(parameterClass).setParameter(statement, i, value, parameterMapping.getJdbcType());
+                        } else {
+                            statement.bind(i, value);
+                        }
+                    } catch (TypeException e) {
+                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
+                    }
                 }
             }
-
         }
     }
 
