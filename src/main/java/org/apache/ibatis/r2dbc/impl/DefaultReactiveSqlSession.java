@@ -283,12 +283,11 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
 
     private Flux<? extends Result> executeFluxStatement(Connection connection, Statement statement) {
         return Flux.from(statement.execute())
-                .doFinally(a -> ((Mono) connection.close()).subscribe(b -> { }));
+                .doFinally(a -> ((Mono) connection.close()).subscribe());
     }
     private Mono<? extends Result> executeMonoStatement(Connection connection, Statement statement) {
         return Mono.from(statement.execute())
-                .doFinally(a -> ((Mono) connection.close()).subscribe(b -> {
-                }));
+                .doFinally(a -> ((Mono) connection.close()).subscribe());
     }
     private Mono<Connection> getConnection() {
         Mono<Connection> connection = (Mono<Connection>) connectionFactory.create();
