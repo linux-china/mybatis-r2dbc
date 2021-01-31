@@ -21,6 +21,14 @@
         insert into people(nick, created_at) value (#{nick}, now())
     </insert>
 
+    <insert id="batchInsert">
+        insert into people (nick,created_at)
+        values
+        <foreach collection="userList" item="item" separator=",">
+            (#{item.nick},#{item.createdAt})
+        </foreach>
+    </insert>
+
     <select id="findById" parameterType="int" resultMap="UserResultMap">
         select id, nick, created_at from people WHERE id = #{value}
     </select>

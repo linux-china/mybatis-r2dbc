@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Select;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +14,8 @@ import java.util.Map;
  * @author linux_china
  */
 public interface UserMapper {
+
+    Mono<Integer> batchInsert(List<User> userList);
 
     Mono<Integer> insert(User user);
 
