@@ -15,10 +15,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <reactor-bom.version>Dysprosium-SR13</reactor-bom.version>
-        <r2dbc-bom.version>Arabba-SR8</r2dbc-bom.version>
+        <reactor-bom.version>Dysprosium-SR17</reactor-bom.version>
+        <r2dbc-bom.version>Arabba-SR9</r2dbc-bom.version>
         <mybatis.version>3.5.6</mybatis.version>
-        <junit5.version>5.7.0</junit5.version>
+        <junit5.version>5.7.1</junit5.version>
     </properties>
 
     <developers>
@@ -54,7 +54,6 @@
         <dependency>
             <groupId>org.mariadb</groupId>
             <artifactId>r2dbc-mariadb</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
