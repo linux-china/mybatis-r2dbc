@@ -188,19 +188,21 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
                         MetaObject metaObject = configuration.newMetaObject(parameter);
                         value = metaObject.getValue(propertyName);
                     }
-                    if (value == null) {
-                        statement.bindNull(i, parameterMapping.getJavaType());
-                        return;
-                    }
-                    TypeHandler typeHandler = parameterMapping.getTypeHandler();
+                    TypeHandler<?> typeHandler = parameterMapping.getTypeHandler();
                     try {
-                        Class<?> parameterClass = value.getClass();
                         if (typeHandler instanceof R2DBCTypeHandler) {
                             ((R2DBCTypeHandler<Object>) typeHandler).setParameter(statement, i, value, parameterMapping.getJdbcType());
-                        } else if (typeHandlerRegistry.hasTypeHandler(parameterClass)) {
-                            typeHandlerRegistry.getTypeHandler(parameterClass).setParameter(statement, i, value, parameterMapping.getJdbcType());
                         } else {
-                            statement.bind(i, value);
+                            if (value == null) {
+                                statement.bindNull(i, parameterMapping.getJavaType());
+                            } else {
+                                Class<?> parameterClass = value.getClass();
+                                if (typeHandlerRegistry.hasTypeHandler(parameterClass)) {
+                                    typeHandlerRegistry.getTypeHandler(parameterClass).setParameter(statement, i, value, parameterMapping.getJdbcType());
+                                } else {
+                                    statement.bind(i, value);
+                                }
+                            }
                         }
                     } catch (TypeException e) {
                         throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
@@ -285,10 +287,12 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
         return Flux.from(statement.execute())
                 .doFinally(a -> ((Mono) connection.close()).subscribe());
     }
+
     private Mono<? extends Result> executeMonoStatement(Connection connection, Statement statement) {
         return Mono.from(statement.execute())
                 .doFinally(a -> ((Mono) connection.close()).subscribe());
     }
+
     private Mono<Connection> getConnection() {
         Mono<Connection> connection = (Mono<Connection>) connectionFactory.create();
         return connection;
