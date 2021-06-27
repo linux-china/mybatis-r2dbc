@@ -95,7 +95,7 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
 
     @Override
     public <T> Flux<T> select(String statementId, Object parameter, RowBounds rowBounds) {
-        return (Flux<T>) select(statementId, parameter).skip(rowBounds.getOffset()).limitRequest(rowBounds.getLimit());
+        return (Flux<T>) select(statementId, parameter).skip(rowBounds.getOffset()).take(rowBounds.getLimit(),true);
     }
 
     @Override
