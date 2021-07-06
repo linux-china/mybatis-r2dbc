@@ -1,6 +1,7 @@
 package org.apache.ibatis.r2dbc.impl;
 
 import io.r2dbc.spi.*;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.r2dbc.ReactiveSqlSession;
 import org.apache.ibatis.r2dbc.binding.MapperProxyFactory;
@@ -64,7 +65,8 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession {
             ResultMap resultMap = mappedStatement.getResultMaps().get(0);
             return executeFluxStatement(connection, statement)
                     .flatMap(result -> result.map((row, rowMetadata) -> (T) convertRowToResult(row, rowMetadata, resultMap)))
-                    .last();
+                    .singleOrEmpty()
+                    .onErrorMap(IndexOutOfBoundsException.class,e -> new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found many"));
         });
         if (metricsEnabled) {
             return rowSelected.name(statementId).metrics();

@@ -1,6 +1,7 @@
 package org.apache.ibatis.r2dbc.binding;
 
 import org.apache.ibatis.MyBatisBaseTestSupport;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.r2dbc.demo.User;
 import org.apache.ibatis.r2dbc.demo.UserMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -98,5 +99,13 @@ public class MapperProxyFactoryTest extends MyBatisBaseTestSupport {
                 .doOnNext((count)-> System.out.println("Total Count After Insert : " + count))
                 .subscribe();
         Thread.sleep(5000);
+    }
+
+    @Test
+    public void testUserMapperSelectOne() throws Exception {
+        Mono<User> userMono = userMapper.findByNick("linux_china");
+        StepVerifier.create(userMono)
+                .expectError(TooManyResultsException.class)
+                .verify();
     }
 }

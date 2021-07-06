@@ -1,5 +1,6 @@
 package org.apache.ibatis.r2dbc.demo;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 import reactor.core.publisher.Flux;
@@ -29,7 +30,7 @@ public interface UserMapper {
 
     @Select("SELECT id, nick, created_at FROM people WHERE nick = #{value}")
     @ResultMap("UserResultMap")
-    Mono<User> findByNick(String nick);
+    Mono<User> findByNick(@Param("value") String nick);
 
     Flux<User> findAll();
 
