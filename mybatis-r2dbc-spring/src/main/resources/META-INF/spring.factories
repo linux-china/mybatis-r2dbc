@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ org.apache.ibatis.r2dbc.spring.configuration.R2dbcMybatisAutoConfiguration
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+  org.apache.ibatis.r2dbc.spring.configuration.AutoExclusionFilter

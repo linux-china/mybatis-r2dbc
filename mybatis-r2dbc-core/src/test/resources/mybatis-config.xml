@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties>
+        <property name="metrics.enabled" value="true"/>
+        <!-- r2dbc url-->
+        <!-- <property name="r2dbc.url" value="r2dbc:mariadb://root@127.0.0.1:3306/r2dbc"/>-->
+        <property name="r2dbc.pool.initial-size" value="1"/>
+        <property name="r2dbc.pool.max-size" value="10"/>
+        <!-- max idle time, the unit is Minute-->
+        <property name="r2dbc.pool.max-idle-time" value="5"/>
+    </properties>
+
+    <typeAliases>
+        <typeAlias alias="Emp" type="Emp"/>
+        <typeAlias alias="Dept" type="Dept"/>
+    </typeAliases>
+
+    <environments default="default">
+        <environment id="default">
+            <transactionManager type="R2DBC"/>
+            <dataSource type="POOLED">
+                <property name="name" value="r2dbc-test" />
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/r2dbc"/>
+                <property name="username" value="root"/>
+                <property name="password" value="" />
+                <property name="enableMetrics" value="false" />
+                <property name="poolInitialSize" value="1" />
+                <property name="poolMaxSize" value="2"/>
+                <property name="maxIdleTime" value="PT30M"/>
+                <property name="maxCreateConnectionTime" value="PT10S"/>
+                <property name="maxAcquireTime" value="PT10S"/>
+                <property name="maxLifeTime" value="2"/>
+                <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+                <property name="validationDepth" value="REMOTE" />
+                <property name="acquireRetry" value="1" />
+                <property name="backgroundEvictionInterval" value="PT-1S"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/DeptMapper.xml"/>
+        <mapper resource="mapper/EmpMapper.xml"/>
+    </mappers>
+</configuration>

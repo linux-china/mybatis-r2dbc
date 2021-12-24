@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.ibatis.r2dbc.spring.application.mapper.DeptMapper">
+  <resultMap id="BaseResultMap" type="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    <id column="dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap id="TableResultMap" type="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    <id column="dept_dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="dept_dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="dept_location" jdbcType="VARCHAR" property="location" />
+    <result column="dept_create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="columnNameWithTable">
+    dept.dept_no AS dept_dept_no, 
+    dept.dept_name AS dept_dept_name, 
+    dept.location AS dept_location, 
+    dept.create_time AS dept_create_time
+  </sql>
+
+  <insert id="insert" parameterType="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept" useGeneratedKeys="true" keyProperty="deptNo">
+    INSERT INTO dept (dept_name,location,create_time) VALUES (#{deptName},#{location},#{createTime})
+  </insert>
+
+  <select id="count" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM dept
+  </select>
+
+  <select id="selectAll" resultType="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    SELECT * FROM dept
+  </select>
+
+  <select id="selectOneByDeptNo" resultType="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    SELECT * FROM dept WHERE dept_no = #{deptNo}
+  </select>
+
+  <select id="selectListByTime" resultType="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    SELECT * FROM dept WHERE create_time = #{createTime}
+  </select>
+
+  <delete id="deleteByDeptNo">
+    DELETE FROM dept WHERE dept_no = #{deptNo}
+  </delete>
+
+  <update id="updateByDeptNo" parameterType="org.apache.ibatis.r2dbc.spring.application.entity.model.Dept">
+    UPDATE dept
+    SET
+        dept_name = #{deptName},
+        location = #{location},
+        create_time = #{createTime}
+    WHERE dept_no = #{deptNo}
+  </update>
+
+  <resultMap id="DeptWithEmp" type="org.apache.ibatis.r2dbc.spring.application.entity.extend.DeptWithEmp">
+    <id column="dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <collection property="empList" resultMap="org.apache.ibatis.r2dbc.spring.application.mapper.EmpMapper.TableResultMap" />
+  </resultMap>
+
+  <select id="selectDeptWithEmpList" resultMap="DeptWithEmp">
+    SELECT
+    dept.*,
+    <include refid="org.apache.ibatis.r2dbc.spring.application.mapper.EmpMapper.columnNameWithTable" />
+    FROM dept LEFT JOIN emp ON dept.dept_no = emp.dept_no
+  </select>
+
+</mapper>

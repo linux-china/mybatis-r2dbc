@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.ibatis.r2dbc.application.mapper.EmpMapper">
+  <resultMap id="BaseResultMap" type="org.apache.ibatis.r2dbc.application.entity.model.Emp">
+    <id column="emp_no" jdbcType="BIGINT" property="empNo" />
+    <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="manager" jdbcType="VARCHAR" property="manager" />
+    <result column="hire_date" jdbcType="DATE" property="hireDate" />
+    <result column="salary" jdbcType="INTEGER" property="salary" />
+    <result column="kpi" jdbcType="DECIMAL" property="kpi" />
+    <result column="dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap id="TableResultMap" type="org.apache.ibatis.r2dbc.application.entity.model.Emp">
+    <id column="emp_emp_no" jdbcType="BIGINT" property="empNo" />
+    <result column="emp_emp_name" jdbcType="VARCHAR" property="empName" />
+    <result column="emp_job" jdbcType="VARCHAR" property="job" />
+    <result column="emp_manager" jdbcType="VARCHAR" property="manager" />
+    <result column="emp_hire_date" jdbcType="DATE" property="hireDate" />
+    <result column="emp_salary" jdbcType="INTEGER" property="salary" />
+    <result column="emp_kpi" jdbcType="DECIMAL" property="kpi" />
+    <result column="emp_dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="emp_create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="columnNameWithTable">
+    emp.emp_no AS emp_emp_no, 
+    emp.emp_name AS emp_emp_name, 
+    emp.job AS emp_job, 
+    emp.manager AS emp_manager, 
+    emp.hire_date AS emp_hire_date, 
+    emp.salary AS emp_salary, 
+    emp.kpi AS emp_kpi, 
+    emp.dept_no AS emp_dept_no, 
+    emp.create_time AS emp_create_time
+  </sql>
+
+  <resultMap id="EmpWithDept" type="org.apache.ibatis.r2dbc.application.entity.extend.EmpWithDept">
+    <id column="emp_no" jdbcType="BIGINT" property="empNo" />
+    <result column="emp_name" jdbcType="VARCHAR" property="empName" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="manager" jdbcType="VARCHAR" property="manager" />
+    <result column="hire_date" jdbcType="DATE" property="hireDate" />
+    <result column="salary" jdbcType="INTEGER" property="salary" />
+    <result column="kpi" jdbcType="DECIMAL" property="kpi" />
+    <result column="dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <association property="dept" resultMap="org.apache.ibatis.r2dbc.application.mapper.DeptMapper.TableResultMap" />
+  </resultMap>
+
+  <select id="selectEmpWithDeptList" resultMap="EmpWithDept">
+    SELECT
+    emp.*,
+    <include refid="org.apache.ibatis.r2dbc.application.mapper.DeptMapper.columnNameWithTable" />
+    FROM emp LEFT JOIN dept ON emp.dept_no = dept.dept_no
+  </select>
+
+  <parameterMap id="empParamMap" type="org.apache.ibatis.r2dbc.application.entity.model.Emp">
+    <parameter property="createTime" javaType="java.time.LocalDateTime" />
+  </parameterMap>
+
+  <select id="selectByParameterMap"
+          resultType="org.apache.ibatis.r2dbc.application.entity.model.Emp"
+          parameterMap="empParamMap" >
+    SELECT *
+    FROM emp
+    WHERE emp.create_time &lt;= #{createTime}
+  </select>
+</mapper>

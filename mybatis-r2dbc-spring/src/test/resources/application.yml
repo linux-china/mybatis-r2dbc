@@ -1,0 +1,30 @@
+server:
+  port: 9999
+  netty:
+    connection-timeout: PT120S
+r2dbc:
+  mybatis:
+    mapper-locations: classpath:mapper/*.xml
+    map-underscore-to-camel-case: true
+spring:
+  r2dbc:
+    mybatis:
+      jdbc-url: r2dbc:mysql://127.0.0.1:3306/r2dbc
+      username: root
+      password: 123456
+      pool:
+        max-idle-time: PT5M
+        validation-query: SELECT 1 FROM DUAL
+        initial-size: 5
+        max-size: 500
+        acquire-retry: 3
+  sql:
+    init:
+      mode: never
+logging:
+  level:
+    org.apache.ibatis.r2dbc: DEBUG
+    org.springframework: INFO
+    org.springframework.r2dbc: DEBUG
+  file:
+    path: ./logs
