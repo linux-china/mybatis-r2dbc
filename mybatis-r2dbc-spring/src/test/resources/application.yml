@@ -9,7 +9,7 @@ r2dbc:
 spring:
   r2dbc:
     mybatis:
-      jdbc-url: r2dbc:mysql://127.0.0.1:3306/r2dbc
+      r2dbc-url: r2dbc:mysql://127.0.0.1:3306/r2dbc
       username: root
       password: 123456
       pool:

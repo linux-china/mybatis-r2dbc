@@ -4,6 +4,7 @@ import io.r2dbc.spi.ValidationDepth;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.util.ClassUtils;
 import reactor.util.annotation.Nullable;
 
 import java.io.UnsupportedEncodingException;
@@ -34,11 +35,6 @@ public class R2dbcConnectionFactoryProperties {
      * Whether to generate a random connection factory name.
      */
     private boolean generateUniqueName = true;
-
-    /**
-     * Jdbc format URL .
-     */
-    private String jdbcUrl;
 
     /**
      * R2dbc format Url
@@ -83,12 +79,8 @@ public class R2dbcConnectionFactoryProperties {
      * @return
      */
     public String determineConnectionFactoryUrl() {
-        if (!hasText(this.jdbcUrl) && !hasText(this.r2dbcUrl)) {
+        if(!hasText(this.r2dbcUrl)){
             return null;
-        }
-        if (hasText(this.r2dbcUrl)) {
-            this.r2dbcUrl = this.r2dbcUrl.replace("r2dbc:mysql:", "r2dbc:mariadb:");
-            return this.r2dbcUrl;
         }
         String encodedUsername;
         try {
@@ -104,8 +96,11 @@ public class R2dbcConnectionFactoryProperties {
             //fallback to original password
             encodedPassword = password;
         }
-        String credential = encodedUsername + (password == null || password.isEmpty() ? "" : ":" + encodedPassword);
-        this.r2dbcUrl = this.jdbcUrl.replace("r2dbc:mysql:", "r2dbc:mariadb:");
+        String credential =encodedUsername + (password == null || password.isEmpty() ? "" : ":" + encodedPassword);
+        boolean isMariadbConnectionfactoryPresent = ClassUtils.isPresent("org.mariadb.r2dbc.MariadbConnectionFactory", this.getClass().getClassLoader());
+        if(isMariadbConnectionfactoryPresent && this.r2dbcUrl.startsWith("r2dbc:mysql:")){
+            this.r2dbcUrl = this.r2dbcUrl.replace("r2dbc:mysql:", "r2dbc:mariadb:");
+        }
         this.r2dbcUrl = r2dbcUrl.replace("//", "//" + credential + "@");
         return this.r2dbcUrl;
     }
