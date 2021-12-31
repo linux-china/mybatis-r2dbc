@@ -47,23 +47,25 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                 .flatMap(statementLogHelper -> {
                     String boundSql = mappedStatement.getBoundSql(parameter).getSql();
                     Statement statement = createStatementInternal(connection, boundSql, mappedStatement, parameter, RowBounds.DEFAULT, statementLogHelper);
-                    final boolean useGeneratedKeys = this.isUseGeneratedKeys(mappedStatement);
                     R2dbcKeyGenerator r2dbcKeyGenerator = new DefaultR2dbcKeyGenerator(mappedStatement, super.configuration);
-                    return Flux.from(statement.execute())
-                            .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
-                            .flatMap(result -> {
-                                if (!useGeneratedKeys) {
-                                    return Mono.from(result.getRowsUpdated());
-                                } else {
-                                    int keyPropertiesLength = mappedStatement.getKeyProperties().length;
-                                    return Flux.just(result)
-                                            .take(keyPropertiesLength,true)
-                                            .flatMap(targetResult -> targetResult.map((row, rowMetadata) -> {
-                                                RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
-                                                return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
-                                            }));
-                                }
-                            })
+                    return Mono.just(this.isUseGeneratedKeys(mappedStatement))
+                            .filter(useGeneratedKeys -> useGeneratedKeys)
+                            .flatMapMany(useGeneratedKeys -> Flux.from(statement.execute())
+                                    .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
+                                    .flatMap(result -> {
+                                        int keyPropertiesLength = mappedStatement.getKeyProperties().length;
+                                        return Flux.just(result)
+                                                .take(keyPropertiesLength,true)
+                                                .flatMap(targetResult -> targetResult.map((row, rowMetadata) -> {
+                                                    RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
+                                                    return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
+                                                }));
+                                    })
+                            )
+                            .switchIfEmpty(Flux.defer(() -> Flux.from(statement.execute())
+                                    .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
+                                    .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                            ))
                             .collect(Collectors.summingInt(Integer::intValue))
                             .doOnNext(statementLogHelper::logUpdates);
                 });
