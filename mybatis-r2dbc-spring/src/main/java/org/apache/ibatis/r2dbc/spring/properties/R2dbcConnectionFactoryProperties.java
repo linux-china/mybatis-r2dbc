@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 6/25/21.
  */
 @Getter

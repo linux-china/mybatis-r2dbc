@@ -7,7 +7,7 @@ import org.apache.ibatis.r2dbc.application.entity.model.Emp;
 import java.util.List;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/15/21.
  */
 @ToString(callSuper = true)

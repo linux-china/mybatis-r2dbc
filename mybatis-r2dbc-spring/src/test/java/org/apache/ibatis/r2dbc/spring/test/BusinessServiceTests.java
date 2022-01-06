@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 7/6/21.
  */
 public class BusinessServiceTests extends TestApplicationTests {

@@ -9,7 +9,7 @@ import org.apache.ibatis.r2dbc.executor.type.R2dbcTypeHandlerAdapter;
 import java.nio.ByteBuffer;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class ByteObjectArrayR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<Byte[]> {

@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/10/21.
  */
 public class DefaultReactiveResultHandler implements ReactiveResultHandler {

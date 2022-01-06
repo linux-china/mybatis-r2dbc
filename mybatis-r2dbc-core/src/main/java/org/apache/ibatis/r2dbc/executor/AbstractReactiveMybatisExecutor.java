@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import java.util.function.Function;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/8/21.
  */
 public abstract class AbstractReactiveMybatisExecutor implements ReactiveMybatisExecutor {

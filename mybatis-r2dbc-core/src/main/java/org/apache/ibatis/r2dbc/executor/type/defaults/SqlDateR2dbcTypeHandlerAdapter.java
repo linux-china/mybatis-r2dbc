@@ -10,7 +10,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class SqlDateR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<Date> {

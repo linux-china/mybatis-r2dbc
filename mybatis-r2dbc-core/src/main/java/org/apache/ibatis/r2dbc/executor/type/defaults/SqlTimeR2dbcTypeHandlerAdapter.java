@@ -10,7 +10,7 @@ import java.sql.Time;
 import java.time.LocalTime;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class SqlTimeR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<Time> {

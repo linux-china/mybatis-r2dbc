@@ -3,7 +3,7 @@ package org.apache.ibatis.r2dbc.executor.parameter;
 import org.apache.ibatis.type.JdbcType;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class ParameterHandlerContext {

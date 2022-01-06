@@ -1,12 +1,12 @@
 package org.apache.ibatis.r2dbc;
 
-import org.apache.ibatis.r2dbc.executor.ReactiveExecutorContext;
-import org.apache.ibatis.r2dbc.executor.StatementLogHelper;
+import org.apache.ibatis.r2dbc.executor.support.ReactiveExecutorContext;
+import org.apache.ibatis.r2dbc.executor.support.R2dbcStatementLog;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/16/21.
  */
 public interface MybatisReactiveContextHelper {
@@ -28,10 +28,10 @@ public interface MybatisReactiveContextHelper {
      * init reactive executor context with StatementLogHelper
      *
      * @param context
-     * @param statementLogHelper
+     * @param r2dbcStatementLog
      * @return
      */
-    Context initReactiveExecutorContext(Context context, StatementLogHelper statementLogHelper);
+    Context initReactiveExecutorContext(Context context, R2dbcStatementLog r2dbcStatementLog);
 
     /**
      * init reactive executor context

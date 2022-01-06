@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class ZonedDateTimeR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<ZonedDateTime> {

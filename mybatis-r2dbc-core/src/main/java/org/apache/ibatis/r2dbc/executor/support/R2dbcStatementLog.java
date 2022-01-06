@@ -1,4 +1,4 @@
-package org.apache.ibatis.r2dbc.executor;
+package org.apache.ibatis.r2dbc.executor.support;
 
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.logging.Log;
@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StatementLogHelper {
+public class R2dbcStatementLog {
 
     private final Log statementLog;
 
-    public StatementLogHelper(Log statementLog) {
+    public R2dbcStatementLog(Log statementLog) {
         this.statementLog = statementLog;
     }
 

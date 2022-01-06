@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/8/21.
  */
 public class R2dbcMapperRegistry extends MapperRegistry {

@@ -6,7 +6,7 @@ import io.r2dbc.spi.Statement;
 import org.apache.ibatis.r2dbc.executor.parameter.ParameterHandlerContext;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public interface R2dbcTypeHandlerAdapter<T> {

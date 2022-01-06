@@ -3,7 +3,7 @@ package org.apache.ibatis.r2dbc.exception;
 import io.r2dbc.spi.R2dbcException;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/10/21.
  */
 public class R2dbcParameterException extends R2dbcException {

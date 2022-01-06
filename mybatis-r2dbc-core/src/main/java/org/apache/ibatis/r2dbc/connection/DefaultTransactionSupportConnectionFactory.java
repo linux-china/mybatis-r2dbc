@@ -8,7 +8,7 @@ import io.r2dbc.spi.Wrapped;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.r2dbc.MybatisReactiveContextHelper;
-import org.apache.ibatis.r2dbc.executor.ReactiveExecutorContext;
+import org.apache.ibatis.r2dbc.executor.support.ReactiveExecutorContext;
 import org.apache.ibatis.r2dbc.support.ProxyInstanceFactory;
 import reactor.core.publisher.Mono;
 

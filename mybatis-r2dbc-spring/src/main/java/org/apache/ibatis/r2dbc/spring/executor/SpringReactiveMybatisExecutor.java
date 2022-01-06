@@ -7,7 +7,7 @@ import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
 import reactor.core.publisher.Mono;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/16/21.
  */
 public class SpringReactiveMybatisExecutor extends DefaultReactiveMybatisExecutor {

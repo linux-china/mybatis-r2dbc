@@ -3,7 +3,7 @@ package org.apache.ibatis.r2dbc;
 import org.apache.ibatis.r2dbc.delegate.R2dbcMybatisConfiguration;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/7/21.
  */
 public interface ReactiveSqlSessionFactory extends AutoCloseable {

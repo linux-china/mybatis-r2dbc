@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/15/21.
  */
 public class SimpleMapperTests extends MybatisR2dbcBaseTests {

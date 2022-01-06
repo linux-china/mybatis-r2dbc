@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/16/21.
  */
 public class DefaultReactiveSqlSessionOperator implements ReactiveSqlSessionOperator {

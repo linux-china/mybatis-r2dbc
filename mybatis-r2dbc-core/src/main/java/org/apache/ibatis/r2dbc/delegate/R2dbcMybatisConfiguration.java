@@ -2,7 +2,10 @@ package org.apache.ibatis.r2dbc.delegate;
 
 import io.r2dbc.spi.ConnectionFactory;
 import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.r2dbc.ReactiveSqlSession;
+import org.apache.ibatis.r2dbc.executor.support.R2dbcStatementLog;
+import org.apache.ibatis.r2dbc.executor.support.R2dbcStatementLogFactory;
 import org.apache.ibatis.r2dbc.executor.type.R2dbcTypeHandlerAdapter;
 import org.apache.ibatis.r2dbc.executor.type.R2dbcTypeHandlerAdapterRegistry;
 import org.apache.ibatis.session.Configuration;
@@ -15,13 +18,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/8/21.
  */
 public class R2dbcMybatisConfiguration extends Configuration {
 
     private final R2dbcMapperRegistry r2dbcMapperRegistry = new R2dbcMapperRegistry(this);
     private final R2dbcTypeHandlerAdapterRegistry r2dbcTypeHandlerAdapterRegistry = new R2dbcTypeHandlerAdapterRegistry(this);
+    private final R2dbcStatementLogFactory r2dbcStatementLogFactory = new R2dbcStatementLogFactory(this);
     private final Set<Class> notSupportedDataTypes = new HashSet<>();
     private ConnectionFactory connectionFactory;
 
@@ -76,6 +80,12 @@ public class R2dbcMybatisConfiguration extends Configuration {
         return this.r2dbcMapperRegistry.hasMapper(type);
     }
 
+    @Override
+    public void addMappedStatement(MappedStatement ms) {
+        super.addMappedStatement(ms);
+        this.r2dbcStatementLogFactory.initR2dbcStatementLog(ms);
+    }
+
     public void addR2dbcTypeHandlerAdapter(R2dbcTypeHandlerAdapter r2dbcTypeHandlerAdapter) {
         this.r2dbcTypeHandlerAdapterRegistry.register(r2dbcTypeHandlerAdapter);
     }
@@ -94,5 +104,22 @@ public class R2dbcMybatisConfiguration extends Configuration {
 
     public Set<Class> getNotSupportedDataTypes() {
         return this.notSupportedDataTypes;
+    }
+
+    /**
+     * get r2dbc statement log
+     * @param mappedStatement target MappedStatement
+     * @return the R2dbcStatementLog
+     */
+    public R2dbcStatementLog getR2dbcStatementLog(MappedStatement mappedStatement) {
+        return this.r2dbcStatementLogFactory.getR2dbcStatementLog(mappedStatement);
+    }
+
+    /**
+     * get r2dbc statement log factory
+     * @return the R2dbcStatementLogFactory
+     */
+    public R2dbcStatementLogFactory getR2dbcStatementLogFactory() {
+        return r2dbcStatementLogFactory;
     }
 }

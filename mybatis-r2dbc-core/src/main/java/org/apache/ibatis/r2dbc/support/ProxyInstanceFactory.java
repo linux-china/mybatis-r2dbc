@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/12/21.
  */
 @SuppressWarnings("unchecked")

@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.time.OffsetTime;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class OffsetTimeR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<OffsetTime> {

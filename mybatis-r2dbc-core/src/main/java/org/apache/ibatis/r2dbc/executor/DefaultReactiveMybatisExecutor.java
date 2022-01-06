@@ -16,6 +16,8 @@ import org.apache.ibatis.r2dbc.executor.parameter.DelegateR2dbcParameterHandler;
 import org.apache.ibatis.r2dbc.executor.result.RowResultWrapper;
 import org.apache.ibatis.r2dbc.executor.result.handler.DefaultReactiveResultHandler;
 import org.apache.ibatis.r2dbc.executor.result.handler.ReactiveResultHandler;
+import org.apache.ibatis.r2dbc.executor.support.ReactiveExecutorContext;
+import org.apache.ibatis.r2dbc.executor.support.R2dbcStatementLog;
 import org.apache.ibatis.r2dbc.support.ProxyInstanceFactory;
 import org.apache.ibatis.session.RowBounds;
 import reactor.core.publisher.Flux;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 import static org.apache.ibatis.r2dbc.executor.result.handler.ReactiveResultHandler.DEFERRED;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecutor {
@@ -46,28 +48,28 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                 .map(ReactiveExecutorContext::getStatementLogHelper)
                 .flatMap(statementLogHelper -> {
                     String boundSql = mappedStatement.getBoundSql(parameter).getSql();
-                    Statement statement = createStatementInternal(connection, boundSql, mappedStatement, parameter, RowBounds.DEFAULT, statementLogHelper);
-                    R2dbcKeyGenerator r2dbcKeyGenerator = new DefaultR2dbcKeyGenerator(mappedStatement, super.configuration);
+                    Statement statement = this.createStatementInternal(connection, boundSql, mappedStatement, parameter, RowBounds.DEFAULT, statementLogHelper);
                     return Mono.just(this.isUseGeneratedKeys(mappedStatement))
-                            .filter(useGeneratedKeys -> useGeneratedKeys)
-                            .flatMapMany(useGeneratedKeys -> Flux.from(statement.execute())
-                                    .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
-                                    .flatMap(result -> {
-                                        int keyPropertiesLength = mappedStatement.getKeyProperties().length;
-                                        return Flux.just(result)
-                                                .take(keyPropertiesLength,true)
-                                                .flatMap(targetResult -> targetResult.map((row, rowMetadata) -> {
-                                                    RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
-                                                    return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
-                                                }));
-                                    })
-                            )
-                            .switchIfEmpty(Flux.defer(() -> Flux.from(statement.execute())
-                                    .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
-                                    .flatMap(result -> Mono.from(result.getRowsUpdated()))
-                            ))
-                            .collect(Collectors.summingInt(Integer::intValue))
-                            .doOnNext(statementLogHelper::logUpdates);
+                        .filter(useGeneratedKeys -> useGeneratedKeys)
+                        .map(useGeneratedKeys -> new DefaultR2dbcKeyGenerator(mappedStatement, super.configuration))
+                        .flatMapMany(r2dbcKeyGenerator -> Flux.from(statement.execute())
+                            .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
+                            .flatMap(result -> {
+                                int keyPropertiesLength = mappedStatement.getKeyProperties().length;
+                                return Flux.just(result)
+                                    .take(keyPropertiesLength,true)
+                                    .flatMap(targetResult -> targetResult.map((row, rowMetadata) -> {
+                                        RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
+                                        return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
+                                    }));
+                            })
+                        )
+                        .switchIfEmpty(Flux.defer(() -> Flux.from(statement.execute())
+                            .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
+                            .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                        ))
+                        .collect(Collectors.summingInt(Integer::intValue))
+                        .doOnNext(statementLogHelper::logUpdates);
                 });
     }
 
@@ -80,16 +82,16 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                     Statement statement = this.createStatementInternal(connection, boundSql, mappedStatement, parameter, rowBounds, statementLogHelper);
                     ReactiveResultHandler reactiveResultHandler = new DefaultReactiveResultHandler(configuration, mappedStatement);
                     return Flux.from(statement.execute())
-                            .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
-                            .skip(rowBounds.getOffset())
-                            .take(rowBounds.getLimit(),true)
-                            .concatMap(result -> result.map((row, rowMetadata) -> {
-                                RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
-                                return (List<E>) reactiveResultHandler.handleResult(rowResultWrapper);
-                            }))
-                            .concatMap(Flux::fromIterable)
-                            .filter(data -> !Objects.equals(data, DEFERRED))
-                            .doOnComplete(() -> statementLogHelper.logTotal(reactiveResultHandler.getResultRowTotalCount()));
+                        .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
+                        .skip(rowBounds.getOffset())
+                        .take(rowBounds.getLimit(),true)
+                        .concatMap(result -> result.map((row, rowMetadata) -> {
+                            RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
+                            return (List<E>) reactiveResultHandler.handleResult(rowResultWrapper);
+                        }))
+                        .concatMap(Flux::fromIterable)
+                        .filter(data -> !Objects.equals(data, DEFERRED))
+                        .doOnComplete(() -> statementLogHelper.logTotal(reactiveResultHandler.getResultRowTotalCount()));
                 });
 
     }
@@ -108,8 +110,8 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                                               MappedStatement mappedStatement,
                                               Object parameter,
                                               RowBounds rowBounds,
-                                              StatementLogHelper statementLogHelper) {
-        statementLogHelper.logSql(boundSql);
+                                              R2dbcStatementLog r2dbcStatementLog) {
+        r2dbcStatementLog.logSql(boundSql);
         StatementHandler handler = configuration.newStatementHandler(null, mappedStatement, parameter, rowBounds, null, null);
         ParameterHandler parameterHandler = handler.getParameterHandler();
         Statement statement = connection.createStatement(boundSql);
@@ -125,7 +127,7 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                         this.configuration,
                         parameterHandler,
                         statement,
-                        statementLogHelper)
+                    r2dbcStatementLog)
         );
         try {
             delegateParameterHandler.setParameters(null);

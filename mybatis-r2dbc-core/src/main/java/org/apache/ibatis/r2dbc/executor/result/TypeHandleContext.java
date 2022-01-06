@@ -3,7 +3,7 @@ package org.apache.ibatis.r2dbc.executor.result;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/11/21.
  */
 public interface TypeHandleContext {

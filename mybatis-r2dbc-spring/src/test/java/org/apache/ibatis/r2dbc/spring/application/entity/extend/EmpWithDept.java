@@ -5,7 +5,7 @@ import org.apache.ibatis.r2dbc.spring.application.entity.model.Dept;
 import org.apache.ibatis.r2dbc.spring.application.entity.model.Emp;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/15/21.
  */
 @ToString(callSuper = true)

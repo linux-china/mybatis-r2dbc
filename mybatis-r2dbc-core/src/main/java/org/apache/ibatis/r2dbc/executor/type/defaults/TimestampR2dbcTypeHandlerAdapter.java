@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class TimestampR2dbcTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<Timestamp> {

@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 6/25/21.
  */
 public class R2dbcConnectionFactoryProperties {

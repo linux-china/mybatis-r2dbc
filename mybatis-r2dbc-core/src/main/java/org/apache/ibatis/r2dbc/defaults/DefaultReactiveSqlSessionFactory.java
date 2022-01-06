@@ -12,7 +12,7 @@ import java.io.Closeable;
 import java.util.Objects;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/8/21.
  */
 public class DefaultReactiveSqlSessionFactory implements ReactiveSqlSessionFactory {

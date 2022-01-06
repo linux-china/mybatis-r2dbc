@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/10/21.
  */
 public class DelegateR2dbcResultRowDataHandler implements InvocationHandler {

@@ -5,7 +5,7 @@ import org.apache.ibatis.r2dbc.executor.result.RowResultWrapper;
 import java.util.List;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/10/21.
  */
 public interface ReactiveResultHandler {

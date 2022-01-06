@@ -1,4 +1,4 @@
-package org.apache.ibatis.r2dbc.executor;
+package org.apache.ibatis.r2dbc.executor.support;
 
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.IsolationLevel;
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * @author: chenggang
+ * @author chenggang
  * @date 12/9/21.
  */
 public class ReactiveExecutorContext {
@@ -22,7 +22,7 @@ public class ReactiveExecutorContext {
     private final AtomicBoolean withTransaction = new AtomicBoolean(false);
     private final boolean autoCommit;
     private final IsolationLevel isolationLevel;
-    private StatementLogHelper statementLogHelper;
+    private R2dbcStatementLog r2dbcStatementLog;
 
     public ReactiveExecutorContext(boolean autoCommit, IsolationLevel isolationLevel) {
         this.autoCommit = autoCommit;
@@ -89,12 +89,12 @@ public class ReactiveExecutorContext {
         return isolationLevel;
     }
 
-    public StatementLogHelper getStatementLogHelper() {
-        return statementLogHelper;
+    public R2dbcStatementLog getStatementLogHelper() {
+        return r2dbcStatementLog;
     }
 
-    public void setStatementLogHelper(StatementLogHelper statementLogHelper) {
-        this.statementLogHelper = statementLogHelper;
+    public void setStatementLogHelper(R2dbcStatementLog r2dbcStatementLog) {
+        this.r2dbcStatementLog = r2dbcStatementLog;
     }
 
     public boolean bindConnection(Connection connection) {
@@ -116,7 +116,7 @@ public class ReactiveExecutorContext {
                 ", forceCommit=" + forceCommit +
                 ", forceRollback=" + forceRollback +
                 ", requireClosed=" + requireClosed +
-                ", statementLogHelper=" + statementLogHelper +
+                ", statementLogHelper=" + r2dbcStatementLog +
                 " ]";
     }
 }
