@@ -89,11 +89,11 @@ public class ReactiveExecutorContext {
         return isolationLevel;
     }
 
-    public R2dbcStatementLog getStatementLogHelper() {
+    public R2dbcStatementLog getR2dbcStatementLog() {
         return r2dbcStatementLog;
     }
 
-    public void setStatementLogHelper(R2dbcStatementLog r2dbcStatementLog) {
+    public void setR2dbcStatementLog(R2dbcStatementLog r2dbcStatementLog) {
         this.r2dbcStatementLog = r2dbcStatementLog;
     }
 
@@ -116,7 +116,7 @@ public class ReactiveExecutorContext {
                 ", forceCommit=" + forceCommit +
                 ", forceRollback=" + forceRollback +
                 ", requireClosed=" + requireClosed +
-                ", statementLogHelper=" + r2dbcStatementLog +
+                ", r2dbcStatementLog=" + r2dbcStatementLog +
                 " ]";
     }
 }

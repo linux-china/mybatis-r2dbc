@@ -141,11 +141,11 @@ public class DefaultReactiveSqlSession implements ReactiveSqlSession, MybatisRea
             if (this.withTransaction) {
                 reactiveExecutorContext.setWithTransaction();
             }
-            reactiveExecutorContext.setStatementLogHelper(r2dbcStatementLog);
+            reactiveExecutorContext.setR2dbcStatementLog(r2dbcStatementLog);
             return context;
         }
         ReactiveExecutorContext newContext = new ReactiveExecutorContext(autoCommit, isolationLevel);
-        newContext.setStatementLogHelper(r2dbcStatementLog);
+        newContext.setR2dbcStatementLog(r2dbcStatementLog);
         if (this.withTransaction) {
             newContext.setWithTransaction();
         }

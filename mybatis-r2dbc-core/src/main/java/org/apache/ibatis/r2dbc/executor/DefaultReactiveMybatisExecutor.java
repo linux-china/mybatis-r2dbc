@@ -11,7 +11,6 @@ import org.apache.ibatis.r2dbc.MybatisReactiveContextHelper;
 import org.apache.ibatis.r2dbc.delegate.R2dbcMybatisConfiguration;
 import org.apache.ibatis.r2dbc.exception.R2dbcParameterException;
 import org.apache.ibatis.r2dbc.executor.key.DefaultR2dbcKeyGenerator;
-import org.apache.ibatis.r2dbc.executor.key.R2dbcKeyGenerator;
 import org.apache.ibatis.r2dbc.executor.parameter.DelegateR2dbcParameterHandler;
 import org.apache.ibatis.r2dbc.executor.result.RowResultWrapper;
 import org.apache.ibatis.r2dbc.executor.result.handler.DefaultReactiveResultHandler;
@@ -45,7 +44,7 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
     @Override
     protected Mono<Integer> doUpdateWithConnection(Connection connection, MappedStatement mappedStatement, Object parameter) {
         return MybatisReactiveContextHelper.currentContext()
-                .map(ReactiveExecutorContext::getStatementLogHelper)
+                .map(ReactiveExecutorContext::getR2dbcStatementLog)
                 .flatMap(statementLogHelper -> {
                     String boundSql = mappedStatement.getBoundSql(parameter).getSql();
                     Statement statement = this.createStatementInternal(connection, boundSql, mappedStatement, parameter, RowBounds.DEFAULT, statementLogHelper);
@@ -76,7 +75,7 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
     @Override
     protected <E> Flux<E> doQueryWithConnection(Connection connection, MappedStatement mappedStatement, Object parameter, RowBounds rowBounds) {
         return MybatisReactiveContextHelper.currentContext()
-                .map(ReactiveExecutorContext::getStatementLogHelper)
+                .map(ReactiveExecutorContext::getR2dbcStatementLog)
                 .flatMapMany(statementLogHelper -> {
                     String boundSql = mappedStatement.getBoundSql(parameter).getSql();
                     Statement statement = this.createStatementInternal(connection, boundSql, mappedStatement, parameter, rowBounds, statementLogHelper);
