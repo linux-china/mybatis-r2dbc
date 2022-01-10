@@ -53,21 +53,18 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
                         .map(useGeneratedKeys -> new DefaultR2dbcKeyGenerator(mappedStatement, super.configuration))
                         .flatMapMany(r2dbcKeyGenerator -> Flux.from(statement.execute())
                             .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
-                            .flatMap(result -> {
-                                int keyPropertiesLength = mappedStatement.getKeyProperties().length;
-                                return Flux.just(result)
-                                    .take(keyPropertiesLength,true)
-                                    .flatMap(targetResult -> targetResult.map((row, rowMetadata) -> {
-                                        RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
-                                        return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
-                                    }));
-                            })
+                            .take(mappedStatement.getKeyProperties().length,true)
+                            .flatMap(result -> result.map((row, rowMetadata) -> {
+                                RowResultWrapper rowResultWrapper = new RowResultWrapper(row, rowMetadata, configuration);
+                                return r2dbcKeyGenerator.handleKeyResult(rowResultWrapper, parameter);
+                            }))
                         )
                         .switchIfEmpty(Flux.defer(() -> Flux.from(statement.execute())
                             .checkpoint("SQL: \"" + boundSql + "\" [DefaultReactiveExecutor]")
                             .flatMap(result -> Mono.from(result.getRowsUpdated()))
                         ))
                         .collect(Collectors.summingInt(Integer::intValue))
+                        .defaultIfEmpty(0)
                         .doOnNext(statementLogHelper::logUpdates);
                 });
     }
