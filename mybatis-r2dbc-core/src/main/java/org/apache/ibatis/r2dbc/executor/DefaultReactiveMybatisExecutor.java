@@ -115,7 +115,7 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
         //not support generated keys by select key
         final boolean useGeneratedKeys = this.isUseGeneratedKeys(mappedStatement);
         if (useGeneratedKeys) {
-            statement.returnGeneratedValues(mappedStatement.getKeyProperties());
+            statement.returnGeneratedValues(mappedStatement.getKeyColumns());
         }
         ParameterHandler delegateParameterHandler = ProxyInstanceFactory.newInstanceOfInterfaces(
                 ParameterHandler.class,
