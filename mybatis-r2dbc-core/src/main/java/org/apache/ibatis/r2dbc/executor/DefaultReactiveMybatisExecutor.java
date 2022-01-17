@@ -1,7 +1,15 @@
 package org.apache.ibatis.r2dbc.executor;
 
+import static org.apache.ibatis.r2dbc.executor.result.handler.ReactiveResultHandler.DEFERRED;
+
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
@@ -15,19 +23,12 @@ import org.apache.ibatis.r2dbc.executor.parameter.DelegateR2dbcParameterHandler;
 import org.apache.ibatis.r2dbc.executor.result.RowResultWrapper;
 import org.apache.ibatis.r2dbc.executor.result.handler.DefaultReactiveResultHandler;
 import org.apache.ibatis.r2dbc.executor.result.handler.ReactiveResultHandler;
-import org.apache.ibatis.r2dbc.executor.support.ReactiveExecutorContext;
 import org.apache.ibatis.r2dbc.executor.support.R2dbcStatementLog;
+import org.apache.ibatis.r2dbc.executor.support.ReactiveExecutorContext;
 import org.apache.ibatis.r2dbc.support.ProxyInstanceFactory;
 import org.apache.ibatis.session.RowBounds;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static org.apache.ibatis.r2dbc.executor.result.handler.ReactiveResultHandler.DEFERRED;
 
 /**
  * @author chenggang
@@ -135,13 +136,17 @@ public class DefaultReactiveMybatisExecutor extends AbstractReactiveMybatisExecu
 
     /**
      * is use generated keys or not
+     * only support original Jdbc3KeyGenerator
+     * not support SelectKeyGenerator
      *
      * @param mappedStatement
      * @return
      */
     private boolean isUseGeneratedKeys(MappedStatement mappedStatement) {
-        boolean hasKeyProperties = mappedStatement.getKeyProperties() != null && mappedStatement.getKeyProperties().length != 0;
-        return mappedStatement.getKeyGenerator() != null && hasKeyProperties;
+        String[] keyColumns = mappedStatement.getKeyColumns();
+        boolean hasKeyColumns = keyColumns != null && keyColumns.length != 0;
+        KeyGenerator keyGenerator = mappedStatement.getKeyGenerator();
+        return keyGenerator instanceof Jdbc3KeyGenerator && hasKeyColumns;
     }
 
 }
